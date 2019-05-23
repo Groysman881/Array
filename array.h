@@ -8,7 +8,16 @@ template<typename T>
 class Array
 {
 public:
-    class Iterator;
+    struct Iterator{
+        T* mas;
+        Iterator():mas(nullptr){}
+        Iterator(const Iterator& iter1):mas(iter1.mas){}
+        Iterator(T* _begin):mas(_begin){}
+        T& operator*(){return *mas;}
+        T operator++(){mas++;return *mas;}
+        T operator--(){mas--;return *mas;}
+        bool operator!=(const Iterator iter1){return mas != iter1.mas;}
+    };
     T* ptr;   
     size_t size;
     size_t capacity;
@@ -25,7 +34,7 @@ public:
         }
         else{
             ptr = new T [arr.capacity];
-            for(int i = 0;i < size;i++){
+            for(int i = 0;i < arr.size;i++){
                 new (ptr + i) T (*(arr.ptr + i));
             }
             size = arr.size;
@@ -127,35 +136,26 @@ public:
         new (ptr + size - 1) T (element);
     }
     size_t getSize(){return size;}
-    Array<T>::Iterator& begin(){
+    Iterator begin(){
         Array<T>::Iterator _begin(this->ptr);
         std::cout<<"Begin"<<std::endl;
-        std::cout<<*ptr<<std::endl;
         return _begin;
     }
-    Array<T>::Iterator& end(){
-        Array<T>::Iterator _end(ptr + size - 1);
+    Iterator end(){
+        Array<T>::Iterator _end(ptr + size);
         std::cout<<"End"<<std::endl;
         return _end;
     }
 
     void print(){
-        for(auto i : *this){
-            std::cout<<"CHECK"<<std::endl;
-            std::cout<< i;
+       /* for(int i = 0 ;i < size;i++){
+            std::cout<< *(ptr + i);
         }
+        std::cout<<std::endl;*/
+        for(auto i : *this){
+            std::cout<<i;
+        }
+        std::cout<<std::endl;
     }
-    class Iterator{
-    private:
-        T* mas;
-    public:
-        Iterator():mas(nullptr){}
-        Iterator(Array<T>::Iterator &iter1):mas(iter1.mas){}
-        Iterator(T* _begin):mas(_begin){}
-        T& operator*(){std::cout<<*mas;return (*mas);}
-        Array<T>::Iterator& operator++(){mas++;return *this;}
-        Array<T>::Iterator& operator--(){mas--;return *this;}
-        bool operator!=(const Array<T>::Iterator &iter1){return mas != iter1.mas;}
-    };
 };
 #endif // ARRAY_H
