@@ -11,16 +11,13 @@ public:
     struct Iterator{
         T* mas;
         Iterator():mas(nullptr){}
-        Iterator(const Iterator& iter1):mas(iter1.mas){}
+        Iterator(const Iterator &iter1):mas(iter1.mas){}
         Iterator(T* _begin):mas(_begin){}
         T& operator*(){return *mas;}
-        T operator++(){mas++;return *mas;}
-        T operator--(){mas--;return *mas;}
-        bool operator!=(const Iterator iter1){return mas != iter1.mas;}
+        T& operator++(){mas++;return *mas;}
+        T& operator--(){mas--;return *mas;}
+        bool operator!=(const Iterator &iter1){return mas != iter1.mas;}
     };
-    T* ptr;   
-    size_t size;
-    size_t capacity;
 
     Array():ptr(nullptr),size(0),capacity(0){}
     ~Array(){
@@ -74,7 +71,6 @@ public:
                 ptr = buf;
             }
             else{
-                std::cout<<"capacity = "<<capacity<<std::endl;
                 for(int i = size;i >= pos + 1;i--){
                     new (ptr + i) T (*(ptr + i - 1));
                 }
@@ -94,6 +90,7 @@ public:
             }
             size--;
             while(size < capacity/2){
+                std::cout<<"?????"<<std::endl;
                 capacity/=2;
                 T* buf = new T[capacity];
                 for(size_t i = 0;i < size;i++){
@@ -116,20 +113,16 @@ public:
         if(size == capacity){
             if(size == 0){
                 ptr = new T[1];
-                std::cout<<"Check"<<std::endl;
                 capacity = 1;
             }
             else{
                 capacity*=2;
-                std::cout<<"capacity push back"<<capacity<<std::endl;
                 T* buf = new T[capacity];
                 for(int i = 0;i < size;i++){
                     new (buf + i) T (*(ptr + i));
                 }
-                std::cout<<buf[0]<<std::endl;
                 delete(ptr);
                 ptr = buf;
-                std::cout<<ptr[0]<<std::endl;
             }
         }
         size++;
@@ -137,25 +130,22 @@ public:
     }
     size_t getSize(){return size;}
     Iterator begin(){
-        Array<T>::Iterator _begin(this->ptr);
-        std::cout<<"Begin"<<std::endl;
+        Array<T>::Iterator _begin(ptr);
         return _begin;
     }
     Iterator end(){
-        Array<T>::Iterator _end(ptr + size);
-        std::cout<<"End"<<std::endl;
+        Array<T>::Iterator _end(ptr + size);      
         return _end;
     }
-
     void print(){
-       /* for(int i = 0 ;i < size;i++){
-            std::cout<< *(ptr + i);
-        }
-        std::cout<<std::endl;*/
         for(auto i : *this){
             std::cout<<i;
         }
         std::cout<<std::endl;
     }
+private:
+    T* ptr;
+    size_t size;
+    size_t capacity;
 };
 #endif // ARRAY_H
