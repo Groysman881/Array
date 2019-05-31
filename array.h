@@ -7,6 +7,10 @@
 template<typename T>
 class Array
 {
+private:
+	T* ptr;
+	size_t size;
+	size_t capacity;	
 public:
     struct Iterator{
         T* mas;
@@ -106,29 +110,29 @@ public:
     }
     void erase(size_t pos){
         try{
-        if(pos < size && size != 0){
-            for(size_t i = pos;i < size - 1;i++){
-                new (ptr + i) T (*(ptr + i + 1));
-                (ptr + i + 1)->~T();
-            }
-
-            while(size < capacity/2){
-                capacity/=2;
-                char* buf = new char [sizeof(T) * capacity];
-                T* buf1 = reinterpret_cast<T*>(buf);
-                for(size_t i = 0;i < size;i++){
-                    new (buf1 + i) T (*(ptr + i));
-                }
-                for(int i = 0;i < size;i++){
+            if(pos < size && size != 0){
+                for(size_t i = pos;i < size - 1;i++){
+                    new (ptr + i) T (*(ptr + i + 1));
+                    (ptr + i + 1)->~T();
+            	}	
+            	while(size < capacity/2){
+                    capacity/=2;
+                    char* buf = new char [sizeof(T) * capacity];
+                    T* buf1 = reinterpret_cast<T*>(buf);
+                    for(size_t i = 0;i < size;i++){
+                    	new (buf1 + i) T (*(ptr + i));
+                    }
+                    for(int i = 0;i < size;i++){
                         (ptr + i)->~T();
 	                delete(ptr);
-                ptr = buf1;
-            }
-            size--;
-        }
-        else{
+                        ptr = buf1;
+                    }
+                    size--;
+                }
+	    }
+            else{
                 throw std::out_of_range("Out of bounds");
-        }
+            }
         }
         catch(std::exception e){
             std::cout<<"Out of bounds"<<std::endl;
@@ -172,9 +176,5 @@ public:
         }
         std::cout<<std::endl;
     }
-private:
-    T* ptr;
-    size_t size;
-    size_t capacity;
 };
 #endif // ARRAY_H
